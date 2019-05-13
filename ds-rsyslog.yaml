@@ -26,7 +26,7 @@ items:
           deploymentconfig: rsyslog
       spec:
         containers:
-        - image: registry.access.redhat.com/rhel7/rsyslog:latest
+        - image: iquay.io/liamwazherealso/docker-centos7-rsyslog:latest
           imagePullPolicy: Always
           name: rsyslog
           resources:
