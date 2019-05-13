@@ -26,6 +26,17 @@ items:
           deploymentconfig: rsyslog
       spec:
         containers:
+        - env:
+          - name: OPS_HOST
+            value: logging-es.osdlogcentral.openshift.com/
+          - name: OPS_PORT
+            value: "443"
+          - name: OPS_CLIENT_CERT
+            value: /etc/fluent/central_keys/cert
+          - name: OPS_CLIENT_KEY
+            value: /etc/fluent/central_keys/key
+          - name: OPS_CA
+            value: /etc/fluent/central_keys/ca
         - image: iquay.io/liamwazherealso/docker-centos7-rsyslog:latest
           imagePullPolicy: Always
           name: rsyslog
@@ -35,7 +46,10 @@ items:
           securityContext:
             privileged: true
           terminationMessagePath: /dev/termination-log
-          volumeMounts:
+          volumeMounts:        
+          - mountPath: /etc/fluent/central_keys
+            name: central-certs
+            readOnly: true
           - mountPath: /var/log
             name: varlog
           - mountPath: /run/log
@@ -57,6 +71,10 @@ items:
         securityContext: {}
         terminationGracePeriodSeconds: 30
         volumes:
+        - name: central-certs
+          secret:
+            defaultMode: 420
+            secretName: centrallogging-certs
         - hostPath:
             path: /var/log
           name: varlog
